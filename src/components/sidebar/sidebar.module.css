@@ -1,0 +1,10 @@
+.sidebarContainer {
+    min-height:100vh;
+    display: flex;
+    align-items: center;
+
+}
+.sidebar {
+    background-color: rgba(85, 218, 218, 0.598);
+    height: 50vh;
+}
