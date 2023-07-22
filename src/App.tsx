@@ -8,6 +8,8 @@ function App() {
   const [ready, setReady] = useState(false);
   const [video, setVideo] = useState<any>();
   const [trimmed, setTrimmed] = useState<string>();
+  const [previewVideo, setPreviewVideo] = useState<any>(video);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const load = async () => {
     await ffmpeg.load();
@@ -19,6 +21,7 @@ function App() {
   }, [])
 
   const convertToGif = async () => {
+    setReady(false)
     // Write the file to memory 
     ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(video));
 
@@ -32,12 +35,13 @@ function App() {
     // Create a URL
     const url = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
     setTrimmed(url)
+    setReady(true);
   }
 
   return ready ? (
     
     <div className="App">
-      { video && 
+      { video && !trimmed && 
           <video
             controls
             width="250"
