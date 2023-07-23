@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import './App.css';
 
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+import Loading from './components/loading';
 const ffmpeg = createFFmpeg({ log: true });
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
     <div className="App">
       <div className={'row'}>
         <div className={'col'}>
+            <input type="file" accept='.mp4' onChange={(e) => setVideo(e.target.files?.item(0))} />
             {video &&
               <>
               <video
@@ -50,7 +52,6 @@ function App() {
                 width="1250"
                 src={updatedVideo || URL.createObjectURL(video)}>
               </video>
-              <input type="file" onChange={(e) => setVideo(e.target.files?.item(0))} />
               <div>
                 <label htmlFor='trim-length'>Trim length</label>
                 <input 
@@ -70,23 +71,7 @@ function App() {
       </div>
     </div>
   )
-    :
-    (
-      <div
-        style={{
-          width: '95vw',
-          height: '70vh',
-          border: '1px solid #ccc',
-          backgroundColor: 'black',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}
-      >
-        <p>Loading...</p>
-      </div>
-    );
+    : <Loading />
 }
 
 export default App;
