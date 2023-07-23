@@ -50,13 +50,22 @@ function App() {
                 width="1250"
                 src={updatedVideo || URL.createObjectURL(video)}>
               </video>
-              <label htmlFor='trim-length'>Trim length</label>
-              <input type='number' min={1} max={60} id={'trim-length'} onChange={(e) => setTrimLength(parseInt(e.target.value))} value={trimLength}/>
-              <button onClick={() => trim(undefined, trimLength.toString())}>Trim</button>
-              <button onClick={reset}>reset</button>
+              <input type="file" onChange={(e) => setVideo(e.target.files?.item(0))} />
+              <div>
+                <label htmlFor='trim-length'>Trim length</label>
+                <input 
+                  type='number' 
+                  min={1} 
+                  max={60} id={'trim-length'} 
+                  onChange={(e) => setTrimLength(parseInt(e.target.value))} 
+                  value={trimLength}
+                />
+                <div className={'col'} />
+                <button onClick={reset}>reset</button>
+                <button onClick={() => trim(undefined, trimLength.toString())}>Trim</button>
+              </div>
               </>
             }
-            <input type="file" onChange={(e) => setVideo(e.target.files?.item(0))} />
         </div>
       </div>
     </div>
