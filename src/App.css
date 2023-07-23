@@ -12,6 +12,27 @@
   align-items: center;
 }
 
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+}
+
+.loadingBox { 
+  width: '95vw';
+  height: '70vh';
+  border: '1px solid #ccc';
+  background-color: 'black';
+  display: 'flex';
+  flex-direction: 'column';
+  justify-content: 'center';
+  align-items: 'center';
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

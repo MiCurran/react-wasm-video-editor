@@ -7,7 +7,8 @@ const ffmpeg = createFFmpeg({ log: true });
 function App() {
   const [ready, setReady] = useState(false);
   const [video, setVideo] = useState<any>();
-  const [trimmed, setTrimmed] = useState<string>();
+  const [updatedVideo, setUpdatedVideo] = useState<string>();
+  const [trimLength, setTrimLength] = useState<number>(10)
 
   const load = async () => {
     await ffmpeg.load();
@@ -15,7 +16,7 @@ function App() {
   }
 
   const reset = () => {
-    setTrimmed(undefined);
+    setUpdatedVideo(undefined);
     setVideo(undefined);
   }
 
@@ -23,59 +24,59 @@ function App() {
     load();
   }, [])
 
-  const convertToGif = async () => {
+  const trim = async (start: string = '00:00:00', end: string = '00:00:10') => {
     setReady(false)
     // Write the file to memory 
     ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(video));
-    await ffmpeg.run('-i', 'test.mp4', '-ss', '00:00:00', '-to', '00:00:10', '-f', 'mp4', 'output.mp4')
+    await ffmpeg.run('-i', 'test.mp4', '-ss', start, '-to', end, '-f', 'mp4', 'output.mp4')
     // Read the result
     const data = ffmpeg.FS('readFile', 'output.mp4');
 
     // Create a URL
     const url = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-    setTrimmed(url)
+    setUpdatedVideo(url)
     setReady(true);
   }
 
   return ready ? (
     
     <div className="App">
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column'
-          }}
-        >
-          { video && !trimmed && 
-          <>
-          <video
-            controls
-            width="250"
-            src={URL.createObjectURL(video)}>
-          </video>
-          <button onClick={convertToGif}>Trim</button>
-          </>
-          }
-          { trimmed && 
-            <>
-              <video controls src={trimmed} width="250" />
+      <div className={'row'}>
+        <div className={'col'}>
+            {video &&
+              <>
+              <video
+                controls
+                width="1250"
+                src={updatedVideo || URL.createObjectURL(video)}>
+              </video>
+              <label htmlFor='trim-length'>Trim length</label>
+              <input type='number' min={1} max={60} id={'trim-length'} onChange={(e) => setTrimLength(parseInt(e.target.value))} value={trimLength}/>
+              <button onClick={() => trim(undefined, trimLength.toString())}>Trim</button>
               <button onClick={reset}>reset</button>
-            </>
-          }
-          <input type="file" onChange={(e) => setVideo(e.target.files?.item(0))} />
+              </>
+            }
+            <input type="file" onChange={(e) => setVideo(e.target.files?.item(0))} />
         </div>
       </div>
     </div>
   )
     :
     (
-      <p>Loading...</p>
+      <div
+        style={{
+          width: '95vw',
+          height: '70vh',
+          border: '1px solid #ccc',
+          backgroundColor: 'black',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}
+      >
+        <p>Loading...</p>
+      </div>
     );
 }
 
