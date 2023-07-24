@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react';
 import './App.css';
-
-import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 import Loading from './components/loading';
-const ffmpeg = createFFmpeg({ log: true });
+import { trim } from './utils/ffmpeg';
 
-function App() {
+function App({ffmpeg}: {ffmpeg: any}) {
   const [ready, setReady] = useState(false);
-  const [video, setVideo] = useState<any>();
+  const [video, setVideo] = useState<File | null | undefined>();
   const [updatedVideo, setUpdatedVideo] = useState<string>();
   const [trimLength, setTrimLength] = useState<number>(10)
+
 
   const load = async () => {
     await ffmpeg.load();
@@ -25,18 +24,16 @@ function App() {
     load();
   }, [])
 
-  const trim = async (start: string = '00:00:00', end: string = '00:00:10') => {
+  const trimVideo = async () => {
     setReady(false)
     // Write the file to memory 
-    ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(video));
-    await ffmpeg.run('-i', 'test.mp4', '-ss', start, '-to', end, '-f', 'mp4', 'output.mp4')
-    // Read the result
-    const data = ffmpeg.FS('readFile', 'output.mp4');
-
+    if (video) {
     // Create a URL
-    const url = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+    const url = URL.createObjectURL(new Blob([(await trim(ffmpeg, video)).buffer], { type: 'video/mp4' }));
     setUpdatedVideo(url)
     setReady(true);
+    }
+    else setReady(true);
   }
 
   return ready ? (
@@ -63,7 +60,7 @@ function App() {
                 />
                 <div className={'col'} />
                 <button onClick={reset}>reset</button>
-                <button onClick={() => trim(undefined, trimLength.toString())}>Trim</button>
+                <button onClick={() => trimVideo()}>Trim</button>
               </div>
               </>
             }
