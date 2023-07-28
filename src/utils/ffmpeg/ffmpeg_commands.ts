@@ -1,7 +1,5 @@
 import { fetchFile } from ".";
 const trim: (ffmpeg: any, video: File, start?: string, end?: string) => Promise<Uint8Array> = async (ffmpeg, video, start = '00:00:00', end = '00:00:10') => {
-// ffmpeg should be changed to instance of FFMPEG
-
         ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(video));
         await ffmpeg.run('-i', 'test.mp4', '-ss', start, '-to', end, '-f', 'mp4', 'output.mp4')
         // Read the result
@@ -12,4 +10,13 @@ const trim: (ffmpeg: any, video: File, start?: string, end?: string) => Promise<
     )
 }
 
-export {trim};
+const overlay: (ffmpeg: any, video: any, image: any) => any
+    = async (ffmpeg, video, image) => {
+        ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(video))
+        ffmpeg.FS('writeFile', 'test.png', await fetchFile(image))
+        await ffmpeg.run('-i', 'test.mp4','-i', 'test.png','-filter_complex',"[0:v][1:v]overlay=x='10':y='10'",'output.mp4')
+        const data = ffmpeg.FS('readFile', 'output.mp4')
+        return (await data)
+    }
+
+export {trim, overlay};
