@@ -10,11 +10,12 @@ const trim: (ffmpeg: any, video: File, start?: string, end?: string) => Promise<
     )
 }
 
-const overlay: (ffmpeg: any, video: any, image: any) => any
-    = async (ffmpeg, video, image) => {
+const overlay: (ffmpeg: any, video: any, image: any, posx: number, posy: number) => any
+    = async (ffmpeg, video, image, posy) => {
+        const POS_Y = posy * 2.2
         ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(video))
         ffmpeg.FS('writeFile', 'test.png', await fetchFile(image))
-        await ffmpeg.run('-i', 'test.mp4','-i', 'test.png','-filter_complex',"[0:v][1:v]overlay=x='10':y='10'",'output.mp4')
+        await ffmpeg.run('-i', 'test.mp4','-i', 'test.png','-filter_complex',`[0:v][1:v]overlay=x='10':y=${POS_Y}`,'output.mp4')
         const data = ffmpeg.FS('readFile', 'output.mp4')
         return (await data)
     }

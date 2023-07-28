@@ -11,6 +11,8 @@ function App({ffmpeg}: {ffmpeg: any}) {
   const [image, setImage] = useState<File | null | undefined>();
   const [updatedVideo, setUpdatedVideo] = useState<string>();
   const [trimLength, setTrimLength] = useState<number>(10)
+  const [posy, setPosy] = useState<number>(30);
+  const [showGuide, setShowGuide] = useState<boolean>(true);
 
   const load = async () => {
     await ffmpeg.load();
@@ -36,14 +38,36 @@ function App({ffmpeg}: {ffmpeg: any}) {
     const videoToUse = updatedVideo || video
     setReady(false);
     if  (image) {
+      console.log(posy);
       const url = URL.createObjectURL(
-        new Blob([(await overlay(ffmpeg, videoToUse, image)).buffer], {type: 'video/mp4'})
+        new Blob([(await overlay(ffmpeg, videoToUse, image, 30, posy)).buffer], {type: 'video/mp4'})
       )
       setUpdatedVideo(url);
       setReady(true);
     }
     else setReady(true)
   }
+
+const changePos = (y: number) => {
+  const element = document.querySelector<HTMLElement>(".content");
+  if (element) {
+    setPosy(y);
+    element.style.setProperty("--ypos", `${posy}px`);
+  }
+}
+
+const hideGuide = () => {
+   const element = document.querySelector<HTMLElement>(".content");
+  if (element) {
+    setShowGuide(!showGuide);
+    if(!showGuide){
+    element.style.setProperty("--guide-display", 'none')
+    }
+    else {
+    element.style.setProperty("--guide-display", 'unset')
+    }
+  } 
+}
 
   useEffect(() => {
     if(!ffmpeg.isLoaded()){
@@ -57,18 +81,22 @@ function App({ffmpeg}: {ffmpeg: any}) {
           <div className="App">
             <div className={'row'}>
               <div className={'col'}>
-                  <FileUploader btnText={'Upload Video'} accepts={'.mp4'} handleFile={setVideo}/>
-                  <FileUploader btnText={'Image Overlay'} accepts={'.png'} handleFile={setImage}/>
+                  {!video && <FileUploader btnText={'Start With A Video'} accepts={'.mp4'} handleFile={setVideo}/> }
                   {image && 
                     <img src={URL.createObjectURL(image)}/>
                   }
-                  {video &&
+                  {!video
+                    ? <h3 id='breathe'>👆</h3>
+                    : (
                     <>
+                    <FileUploader btnText={'Image Overlay'} accepts={'.png'} handleFile={setImage}/>
+                    <div className='content'>
                     <video
                       controls
                       width="1250"
                       src={updatedVideo || URL.createObjectURL(video)}>
                     </video>
+                    </div>
                     <div>
                       <label htmlFor='trim-length'>Trim length</label>
                       <input 
@@ -82,9 +110,12 @@ function App({ffmpeg}: {ffmpeg: any}) {
                       <button onClick={reset}>reset</button>
                       <button onClick={() => trimVideo()}>Trim</button>
                       <button onClick={() => overlayVideo()}>Add Overlay</button>
+                      <button onClick={() => changePos((posy + 10))} >move down</button>
+                      <button onClick={() => hideGuide()}>toggle guide</button>
                     </div>
                     </>
-                  }
+                  )
+                }
               </div>
             </div>
           </div>

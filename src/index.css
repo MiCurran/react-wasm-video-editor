@@ -30,7 +30,29 @@ body {
   min-width: 320px;
   min-height: 100vh;
 }
-
+.content {
+  position: relative;
+  width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.content video {
+  width: 100%;
+  display: block;
+}
+.content:before {
+  display: var(--guide-display, unset);
+  content: '';
+  position: absolute;
+  background: var(--check-primary, rgba(233, 8, 8, 0.5));
+  border-radius: 0px;
+  width: 120px;
+  max-height: 20px;
+  top: var(--ypos, 30px);
+  right: 0;
+  bottom: 0;
+  left: var(--xpos, 30px);
+}
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
@@ -66,4 +88,64 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+#breathe {
+  padding: 12px;
+  margin: -25px auto;
+  -webkit-animation: breathing 3.5s ease-out infinite normal;
+  animation: breathing 3.5s ease-out infinite normal;
+  font-size: 10rem;
+  -webkit-font-smoothing: antialiased;
+  border-radius: 2px;
+  text-align: center;    
+  }
+
+
+@-webkit-keyframes breathing {
+0% {
+  -webkit-transform: scale(0.9);
+  transform: scale(0.9);
+}
+
+25% {
+  -webkit-transform: scale(1);
+  transform: scale(1);
+}
+
+60% {
+  -webkit-transform: scale(0.9);
+  transform: scale(0.9);
+}
+
+100% {
+  -webkit-transform: scale(0.9);
+  transform: scale(0.9);
+}
+}
+
+@keyframes breathing {
+0% {
+  -webkit-transform: scale(0.9);
+  -ms-transform: scale(0.9);
+  transform: scale(0.9);
+}
+
+25% {
+  -webkit-transform: scale(1);
+  -ms-transform: scale(1);
+  transform: scale(1);
+}
+
+60% {
+  -webkit-transform: scale(0.9);
+  -ms-transform: scale(0.9);
+  transform: scale(0.9);
+}
+
+100% {
+  -webkit-transform: scale(0.9);
+  -ms-transform: scale(0.9);
+  transform: scale(0.9);
+}
 }
