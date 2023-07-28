@@ -8,7 +8,7 @@ import FileUploader from './components/fileUpload';
 function App({ffmpeg}: {ffmpeg: any}) {
   const [ready, setReady] = useState<boolean>(false);
   const [video, setVideo] = useState<File | null | undefined>();
-  const [image, setImage] = useState<any>();
+  const [image, setImage] = useState<File | null | undefined>();
   const [updatedVideo, setUpdatedVideo] = useState<string>();
   const [trimLength, setTrimLength] = useState<number>(10)
 
@@ -25,7 +25,6 @@ function App({ffmpeg}: {ffmpeg: any}) {
   const trimVideo = async () => {
     setReady(false)
     if (video) {
-    // Create a URL
     const url = URL.createObjectURL(new Blob([(await trim(ffmpeg, video)).buffer], { type: 'video/mp4' }));
     setUpdatedVideo(url)
     setReady(true);
