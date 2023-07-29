@@ -10,7 +10,7 @@ const trim: (ffmpeg: any, video: File, start?: string, end?: string) => Promise<
     )
 }
 
-const overlay: (ffmpeg: any, video: any, image: any, posx: number, posy: number) => any
+const overlay: (ffmpeg: any, video: any, image: any, posx: number, posy: number) => Promise<Uint8Array>
     = async (ffmpeg, video, image, posy) => {
         const POS_Y = posy * 2.2
         ffmpeg.FS('writeFile', 'test.mp4', await fetchFile(video))
